@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+           <head>
+           <meta charset="UTF-8">
+                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                    <title>Semangat Felizeuuu 🤍</title>
+                                    <style>
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+display:
+    flex;
+align-items:
+    center;
+justify-content:
+    center;
+background:
+    linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4);
+font-family: 'Segoe UI'
+    , sans-serif;
+overflow:
+    hidden;
+}
+.card {
+background:
+    white;
+    padding: 30px 40px;
+    border-radius: 20px;
+text-align:
+    center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+animation:
+    fadeIn 2s ease-in-out;
+}
+h1 {
+    font-size: 2.5rem;
+color:
+#ff5e7e;
+    margin-bottom: 10px;
+}
+p {
+    font-size: 1.2rem;
+color:
+#444;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: scale(0.9); }
+to { opacity: 1; transform: scale(1); }
+}
+.hearts {
+position:
+    absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+pointer-events:
+    none;
+overflow:
+    hidden;
+}
+.heart {
+position:
+    absolute;
+bottom:
+    -20px;
+color:
+#ff5e7e;
+    font-size: 20px;
+animation:
+    floatUp 5s linear infinite;
+}
+@keyframes floatUp {
+from { transform: translateY(0) scale(1); opacity: 1; }
+to { transform: translateY(-110vh) scale(1.5); opacity: 0; }
+}
+</style>
+</head>
+<body>
+<div class="card">
+               <h1>Semangat Felizeuuu 🤍</h1>
+               <p>Aku selalu percaya kamu bisa melewati semua hal dengan kuat dan indah 🌸</p>
+               </div>
+
+               <div class="hearts"></div>
+
+                              <script>
+    // animasi hati melayang
+                              const hearts = document.querySelector('.hearts');
+function createHeart() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.textContent = '❤️';
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+    heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+    hearts.appendChild(heart);
+    setTimeout(() => heart.remove(), 5000);
+}
+setInterval(createHeart, 500);
+</script>
+</body>
+</html>
