@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Semangat, Felizeeuuu! 🎉</title>
+  <style>
+    :root{
+      --bg1: #0f172a;
+      --bg2: #0b1220;
+      --accent1: #ff6b6b;
+      --accent2: #ffd166;
+      --glass: rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    body{
+      background: radial-gradient(1200px 600px at 10% 20%, rgba(255,107,107,0.07), transparent),
+                  radial-gradient(900px 400px at 90% 80%, rgba(255,209,102,0.04), transparent),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;
+    }
+    .card{
+      width:100%;max-width:920px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.6);backdrop-filter: blur(6px);position:relative;overflow:hidden;
+    }
+    header{display:flex;gap:18px;align-items:center}
+    .badge{width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;box-shadow:0 6px 20px rgba(255,107,107,0.18)}
+    h1{margin:0;font-size:34px;letter-spacing:-0.02em}
+    p.lead{margin:6px 0 0 0;opacity:0.9}
+
+    .big-message{
+      margin-top:22px;font-size:54px;font-weight:800;line-height:0.9;display:flex;gap:12px;align-items:center;flex-wrap:wrap
+    }
+    .pulse{animation:pulse 1200ms infinite}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+    .controls{display:flex;gap:12px;margin-top:20px}
+    .btn{padding:12px 18px;border-radius:12px;border:0;cursor:pointer;font-weight:700}
+    .btn-joy{background:linear-gradient(90deg,var(--accent1),#ff8a5b);color:#111}
+    .btn-calm{background:transparent;border:1px solid rgba(255,255,255,0.08);color:inherit}
+
+    .footer{margin-top:18px;font-size:13px;opacity:0.85}
+
+    /* Confetti canvas sits on top */
+    canvas#confetti{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+
+    /* Animated sparkles */
+    .sparkles{position:absolute;right:-60px;top:-60px;opacity:0.95}
+
+    /* responsive */
+    @media (max-width:520px){
+      .big-message{font-size:38px}
+      .badge{width:56px;height:56px;font-size:22px}
+      h1{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-label="Semangat untuk Felizee">
+    <canvas id="confetti"></canvas>
+    <header>
+      <div class="badge" aria-hidden>💖</div>
+      <div>
+        <h1>Untuk Felizee — Semangat terus!</h1>
+        <p class="lead">Pesan kecil ini semoga bikin harimu makin cerah ✨</p>
+      </div>
+    </header>
+
+    <div class="big-message">
+      <span id="word1">SEMANGAT</span>
+      <span id="word2" class="pulse">FELIZEEUUU 🎉</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-joy" id="fireBtn">Tampilkan Konfeti & Suara</button>
+      <button class="btn btn-calm" id="shakeBtn">Gerakkan (Shake)</button>
+      <button class="btn btn-calm" id="copyBtn">Salin Pesan</button>
+    </div>
+
+    <p class="footer">Ketik nama lain di bawah jika mau mengganti kata: <input id="customName" placeholder="contoh: Felizee" style="margin-left:8px;padding:6px;border-radius:8px;border:0;background:var(--glass);color:inherit"> <button id="applyName" class="btn btn-calm" style="margin-left:8px">Ganti</button></p>
+
+    <p class="footer">Bagikan semangat ini — kirimkan link atau Tunjukkan halaman ini ke temanmu ✨</p>
+  </div>
+
+  <script>
+    // Confetti simple implementation
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    function resize(){
+      W = canvas.width = canvas.offsetWidth * devicePixelRatio;
+      H = canvas.height = canvas.offsetHeight * devicePixelRatio;
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+    }
+    resize();
+    window.addEventListener('resize', () => { resize(); });
+
+    function rand(min,max){return Math.random()*(max-min)+min}
+    class Particle{
+      constructor(){
+        this.reset();
+      }
+      reset(){
+        this.x = rand(0, canvas.offsetWidth);
+        this.y = rand(-20, -100);
+        this.size = rand(6,12);
+        this.color = `hsl(${rand(0,360)}, 85%, 60%)`;
+        this.tilt = rand(-10,10);
+        this.speed = rand(1.5,4);
+        this.gravity = rand(0.03,0.12);
+        this.rotation = rand(0,Math.PI*2);
+      }
+      update(){
+        this.y += this.speed;
+        this.x += Math.sin(this.rotation) * 0.7;
+        this.rotation += 0.06;
+        this.tilt += 0.02;
+        if(this.y > canvas.offsetHeight + 40) this.reset();
+      }
+      draw(){
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = this.color;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size*0.6);
+        ctx.restore();
+      }
+    }
+    const particles = [];
+    function burst(n=80){
+      for(let i=0;i<n;i++) particles.push(new Particle());
+      if(!running){ running=true; loop(); }
+      setTimeout(()=>{ // slowly stop adding new ones
+        // allow existing particles to fall away
+      }, 3000);
+    }
+
+    let running = false;
+    function loop(){
+      ctx.clearRect(0,0,canvas.offsetWidth, canvas.offsetHeight);
+      for(let p of particles){ p.update(); p.draw(); }
+      // remove offscreen extras
+      if(particles.length>120) particles.splice(0, particles.length-120);
+      if(running) requestAnimationFrame(loop);
+      else particles.length=0;
+    }
+
+    // Sound: quick uplifting chime using WebAudio
+    function playChime(){
+      try{
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = ctx.currentTime;
+        const o1 = ctx.createOscillator();
+        const o2 = ctx.createOscillator();
+        const g = ctx.createGain();
+        o1.type = 'sine'; o2.type = 'triangle';
+        o1.frequency.setValueAtTime(880, now);
+        o2.frequency.setValueAtTime(1320, now);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.08, now + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+        o1.connect(g); o2.connect(g); g.connect(ctx.destination);
+        o1.start(now); o2.start(now);
+        o1.stop(now + 1.2); o2.stop(now + 1.2);
+      }catch(e){console.warn('Audio gagal dimainkan:', e)}
+    }
+
+    // Button handlers
+    document.getElementById('fireBtn').addEventListener('click', ()=>{
+      burst(110);
+      playChime();
+      const w2 = document.getElementById('word2');
+      w2.classList.remove('pulse');
+      void w2.offsetWidth;
+      w2.classList.add('pulse');
+    });
+
+    document.getElementById('shakeBtn').addEventListener('click', ()=>{
+      const card = document.querySelector('.card');
+      card.animate([
+        { transform: 'translateX(0)' },
+        { transform: 'translateX(-8px)' },
+        { transform: 'translateX(8px)' },
+        { transform: 'translateX(-6px)' },
+        { transform: 'translateX(6px)' },
+        { transform: 'translateX(0)' }
+      ], { duration: 700, easing: 'ease-in-out' });
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async ()=>{
+      const text = document.getElementById('word1').textContent + ' ' + document.getElementById('word2').textContent;
+      try{
+        await navigator.clipboard.writeText(text);
+        alert('Tersalin: ' + text);
+      }catch(e){
+        prompt('Salin pesan ini:', text);
+      }
+    });
+
+    document.getElementById('applyName').addEventListener('click', ()=>{
+      const name = document.getElementById('customName').value.trim();
+      if(!name) return alert('Masukkan nama dulu ya 🙂');
+      document.getElementById('word2').textContent = name + ' 🎉';
+      // small celebration
+      burst(70); playChime();
+    });
+
+    // Small guided entrance animation
+    window.addEventListener('load', ()=>{
+      const w1 = document.getElementById('word1');
+      const w2 = document.getElementById('word2');
+      w1.style.opacity=0; w2.style.opacity=0;
+      setTimeout(()=>{ w1.style.transition='all 450ms ease'; w1.style.opacity=1; w1.style.transform='translateY(0)'; }, 250);
+      setTimeout(()=>{ w2.style.transition='all 600ms cubic-bezier(.2,.9,.2,1)'; w2.style.opacity=1; }, 520);
+    });
+
+    // Accessibility: allow keyboard enter on buttons
+    document.querySelectorAll('.btn').forEach(b=>b.addEventListener('keyup', e=>{ if(e.key==='Enter') b.click(); }));
+
+  </script>
+</body>
+</htmml>
